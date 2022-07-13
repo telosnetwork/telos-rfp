@@ -1,0 +1,16 @@
+{
+    "telosbuild": [
+        {
+            "account": "user1",
+            "locked_tlos_balance": "100.0000 TLOS",
+            "tlos_balance": "0.0000 TLOS",
+            "locked_tlos_bonds": "0.0000 TLOS"
+        },
+        {
+            "account": "user2",
+            "locked_tlos_balance": "100.0000 TLOS",
+            "tlos_balance": "0.0000 TLOS",
+            "locked_tlos_bonds": "0.0000 TLOS"
+        }
+    ]
+}

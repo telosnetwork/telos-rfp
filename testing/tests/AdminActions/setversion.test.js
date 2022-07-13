@@ -4,17 +4,17 @@ const config = loadConfig("hydra.yml");
 
 describe("Set Version Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -24,9 +24,9 @@ describe("Set Version Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
 
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
 
     });
 
@@ -34,18 +34,18 @@ describe("Set Version Telos Works Smart Contract Tests", () => {
         expect.assertions(1);
 
 
-        await telosworks.contract.setversion({ new_version: "0.2.0" },
+        await telosbuild.contract.setversion({ new_version: "0.2.0" },
           [{
             actor: admin.accountName,
             permission: "active"
           }]);
 
-        const config = telosworks.getTableRowsScoped("config")[telosworks.accountName][0];
+        const config = telosbuild.getTableRowsScoped("config")[telosbuild.accountName][0];
         expect(config.contract_version).toEqual("0.2.0");
     })
 
     it("fails to set new version if user different than admin tries", async () => {
-        await expect(telosworks.contract.setversion({ new_version: "0.2.0" },
+        await expect(telosbuild.contract.setversion({ new_version: "0.2.0" },
             [{
               actor: user1.accountName,
               permission: "active"

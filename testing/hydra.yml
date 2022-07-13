@@ -1,9 +1,9 @@
 contracts:
-  telosworks:
-    abi: contracts_source/telosworks/telosworks.abi
-    fixturesDir: tests/fixtures/telosworks
-    name: telosworks
-    wasm: contracts_source/telosworks/telosworks.wasm
+  telosbuild:
+    abi: contracts_source/telosbuild/telosbuild.abi
+    fixturesDir: tests/fixtures/telosbuild
+    name: telosbuild
+    wasm: contracts_source/telosbuild/telosbuild.wasm
   telos.decide:
     abi: contracts_source/telos.decide/telos.decide.abi
     fixturesDir: tests/fixtures/telos.decide

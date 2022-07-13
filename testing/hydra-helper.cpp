@@ -3,18 +3,17 @@ TABLE config {
     name administrator; //account that can approve proposals for voting
     asset available_funds = asset(0, TLOS_SYM); //total available funding for projects
     asset reserved_funds = asset(0, TLOS_SYM); //total funding reserved by approved proposals
-    vector<name> build_directors = vector<name>{};
-    //vector<name> deprecated_build_directors = vector<name>{};
+    vector<name> program_managers = vector<name>{};
+    //vector<name> deprecated_program_managers = vector<name>{};
     double reward_percentage = 0.05; //Invariable
-    double bonus_percentage = 0.05;//Variable
     uint8_t milestones_days = 14;
     uint32_t tlos_locked_time = 365;
 
     int64_t primary_key() const { return name("config").value; };
 
     EOSLIB_SERIALIZE(config, (contract_version)(administrator)
-    (available_funds)(reserved_funds)(build_directors)
-    (reward_percentage)(bonus_percentage)(milestones_days)(tlos_locked_time))
+    (available_funds)(reserved_funds)(program_managers)
+    (reward_percentage)(milestones_days)(tlos_locked_time))
 
 };
 

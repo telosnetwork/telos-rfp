@@ -4,17 +4,17 @@ const config = loadConfig("hydra.yml");
 
 describe("SetAdmin Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -25,8 +25,8 @@ describe("SetAdmin Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();      
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
+        telosbuild.resetTables();      
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
 
     });
 
@@ -35,19 +35,19 @@ describe("SetAdmin Telos Works Smart Contract Tests", () => {
 
         blockchain.createAccount("newadmin");
 
-        await telosworks.contract.setadmin({ new_admin: "newadmin" },
+        await telosbuild.contract.setadmin({ new_admin: "newadmin" },
           [{
             actor: admin.accountName,
             permission: "active"
           }]);
 
-        const config = telosworks.getTableRowsScoped("config")[telosworks.accountName][0];
+        const config = telosbuild.getTableRowsScoped("config")[telosbuild.accountName][0];
         expect(config.administrator).toEqual("newadmin");
       })
 
       it("fails to set new admin if user different than admin tries", async () => {
 
-          await expect(telosworks.contract.setadmin({ new_admin: "user1" },
+          await expect(telosbuild.contract.setadmin({ new_admin: "user1" },
             [{
               actor: user1.accountName,
               permission: "active"
@@ -56,7 +56,7 @@ describe("SetAdmin Telos Works Smart Contract Tests", () => {
 
       it("do not change current admin if new admin do not exists", async () => {
 
-        await expect(telosworks.contract.setadmin({ new_admin: "fakeadmin" },
+        await expect(telosbuild.contract.setadmin({ new_admin: "fakeadmin" },
           [{
             actor: admin.accountName,
             permission: "active"

@@ -1,14 +1,13 @@
 {
-    "telosworks": [
+    "telosbuild": [
         {
             "contract_version": "0.1.0",
             "administrator": "admin",
             "available_funds": "50.0000 TLOS",
             "reserved_funds": "0.0000 TLOS",
             "tlos_locked_time": 365,
-            "build_directors": ["user1"],
+            "program_managers": ["user1"],
             "reward_percentage": 0.05,
-            "bonus_percentage": 0.05,
             "milestones_days":14
         }
     ]

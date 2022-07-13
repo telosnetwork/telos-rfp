@@ -4,19 +4,19 @@ const config = loadConfig("hydra.yml");
 
 describe("Select Proposal Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
     let user2 = blockchain.createAccount("user2");
     let eosiotoken = blockchain.createAccount("eosio.token");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -28,20 +28,22 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
 
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
-        await telosworks.loadFixtures("profiles", require("../fixtures/telosworks/profiles.json"));
-        await telosworks.loadFixtures("projects", {
-            "telosworks": [
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
+        await telosbuild.loadFixtures("projects", {
+            "telosbuild": [
                 {
                     "project_id": 0,
                     "title": "Title",
                     "ballot_name": "",
                     "status": 4,
-                    "build_director": "user1",
+                    "bond": "10.0000 TLOS",
+                    "program_manager": "user1",
+                    "project_manager": "",
                     "description": "description",
                     "github_url": "url",
+                    "pdf":"pdf",
                     "usd_rewarded": "10.0000 USD",
                     "tlos_locked": "0.0000 TLOS",
                     "number_proposals_rewarded": 2,
@@ -57,40 +59,55 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
                 }
             ]
         });
-       await telosworks.loadFixtures("proposals", {
-           "": [
+       await telosbuild.loadFixtures("proposals", {
+           "telosbuild": [
                {
                 "proposal_id": "0",
+                "project_id": "0",
+                "status": "5",
+                "title": "Title",
                 "proposer": "user1",
                 "timeline": "timeline",
                 "number_milestones": 5,
-                "pdf": "pdf",
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
                 "usd_amount": "10.0000 USD",
-                "locked_tlos_amount": "0.0000 TLOS",
                 "mockups_link": "mockups_link",
                 "kanban_board_link": "kanban_board_link",
                 "update_ts": "2000-01-01T00:00:00.000"
                },
                {
                 "proposal_id": "1",
+                "project_id": "0",
+                "status": "5",
+                "title": "Title",
                 "proposer": "user1",
                 "timeline": "new timeline",
                 "number_milestones": 5,
-                "pdf": "pdf",
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
                 "usd_amount": "10.0000 USD",
-                "locked_tlos_amount": "0.0000 TLOS",
                 "mockups_link": "mockups_link",
                 "kanban_board_link": "kanban_board_link",
                 "update_ts": "2000-01-01T00:00:00.000"
                },
                 {
                 "proposal_id": "2",
+                "project_id": "0",
+                "status": "5",
                 "proposer": "user1",
+                "title": "Title",
                 "timeline": "new timeline",
                 "number_milestones": 5,
-                "pdf": "pdf",
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
                 "usd_amount": "10.0000 USD",
-                "locked_tlos_amount": "0.0000 TLOS",
                 "mockups_link": "mockups_link",
                 "kanban_board_link": "kanban_board_link",
                 "update_ts": "2000-01-01T00:00:00.000"
@@ -101,9 +118,9 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
     });
 
     it("Pick proposal succeeds", async () => { 
-        expect.assertions(1);
+        expect.assertions(2);
 
-        await telosworks.contract.pickproposal({
+        await telosbuild.contract.pickproposal({
             project_id: 0,
             proposal_id: 1
         }, [{
@@ -111,15 +128,18 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
             permission: "active"
         }])
 
-        const project = telosworks.getTableRowsScoped("projects")["telosworks"];
+        const project = telosbuild.getTableRowsScoped("projects")["telosbuild"];
         expect(project.find(proj => proj.project_id === "0")).toEqual({
                 project_id: '0',
                 title: 'Title',
                 ballot_name: "",
                 status: 5,
-                build_director: 'user1',
+                program_manager: 'user1',
+                bond: "10.0000 TLOS",
+                project_manager: "user1",
                 description: 'description',
                 github_url: 'url',
+                pdf: "pdf",
                 usd_rewarded: '10.0000 USD',
                 tlos_locked: '0.0000 TLOS',
                 proposal_selected: ["1"],
@@ -133,11 +153,64 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
                 start_ts: "2000-01-01T00:00:00.000",
                 end_ts: "2000-01-01T00:00:00.000",
         })
+
+        const proposals = telosbuild.getTableRowsScoped("proposals")["telosbuild"];
+        expect(proposals).toEqual([
+            {
+                "kanban_board_link": "kanban_board_link",
+                "mockups_link": "mockups_link",
+                "number_milestones": "5",
+                "project_id": "0",
+                "proposal_id": "0",
+                "title": "Title",
+                "proposer": "user1",
+                "status": 5,
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
+                "timeline": "timeline",
+                "update_ts": "2000-01-01T00:00:00.000",
+                "usd_amount": "10.0000 USD"
+            }, {
+                "kanban_board_link": "kanban_board_link",
+                "mockups_link": "mockups_link",
+                "number_milestones": "5",
+                "title": "Title",
+                "project_id": "0",
+                "proposal_id": "1",
+                "proposer": "user1",
+                "status": 6,
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
+                "timeline": "new timeline",
+                "update_ts": "2000-01-01T00:00:00.000",
+                "usd_amount": "10.0000 USD"
+            }, {
+                "kanban_board_link": "kanban_board_link",
+                "mockups_link": "mockups_link",
+                "number_milestones": "5",
+                "title": "Title",
+                "project_id": "0",
+                "proposal_id": "2",
+                "proposer": "user1",
+                "status": 5,
+                "tech_qualifications_pdf": "tech_pdf",
+                "approach_pdf": "approach_pdf",
+                "cost_and_schedule_pdf": "cost&schedule_pdf",
+                "references_pdf": "references_pdf",
+                "timeline": "new timeline",
+                "update_ts": "2000-01-01T00:00:00.000",
+                "usd_amount": "10.0000 USD"
+            }]
+        );
     });
 
 
     it("fails if project not found", async () => { 
-        await expect(telosworks.contract.pickproposal({
+        await expect(telosbuild.contract.pickproposal({
             project_id: 54,
             proposal_id: 1,
         }, [{
@@ -147,16 +220,19 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
     });
 
     it("fails if project is not in voted state", async () => { 
-          await telosworks.loadFixtures("projects", {
-            "telosworks": [
+          await telosbuild.loadFixtures("projects", {
+            "telosbuild": [
                 {
                     "project_id": 1,
                     "title": "Title",
                     "ballot_name": "",
                     "status": 3,
-                    "build_director": "user1",
+                    "bond": "10.0000 TLOS",
+                    "program_manager": "user1",
+                    "project_manager": "",
                     "description": "description",
                     "github_url": "url",
+                    "pdf":"pdf",
                     "usd_rewarded": "10.0000 USD",
                     "tlos_locked": "0.0000 TLOS",
                     "number_proposals_rewarded": 2,
@@ -173,7 +249,7 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
             ]
           });
         
-        await expect(telosworks.contract.pickproposal({
+        await expect(telosbuild.contract.pickproposal({
             project_id: 1,
             proposal_id: 1,
         }, [{
@@ -184,7 +260,7 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
 
 
     it("fails if proposals selected is not between the proposals rewarded", async () => { 
-        await expect(telosworks.contract.pickproposal({
+        await expect(telosbuild.contract.pickproposal({
             project_id: 0,
             proposal_id: 2,
         }, [{
@@ -194,8 +270,8 @@ describe("Select Proposal Telos Works Smart Contract Tests", () => {
     });
 
 
-    it("fails if user other than build director tries to select proposal", async () => { 
-        await expect(telosworks.contract.pickproposal({
+    it("fails if user other than program manager tries to select proposal", async () => { 
+        await expect(telosbuild.contract.pickproposal({
             project_id: 0,
             proposal_id: 1
         }, [{

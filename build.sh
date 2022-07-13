@@ -1,8 +1,8 @@
 #! /bin/bash
 
 #contract
-if [[ "$1" == "telosworks" ]]; then
-    contract=telosworks
+if [[ "$1" == "telosbuild" ]]; then
+    contract=telosbuild
 else
     echo "need contract"
     exit 0

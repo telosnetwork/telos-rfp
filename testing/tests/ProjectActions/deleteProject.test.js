@@ -4,18 +4,18 @@ const config = loadConfig("hydra.yml");
 
 describe("Delete Project Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
     let user2 = blockchain.createAccount("user2");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -25,20 +25,22 @@ describe("Delete Project Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
 
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
-        await telosworks.loadFixtures("profiles", require("../fixtures/telosworks/profiles.json"));
-         await telosworks.loadFixtures("projects", {
-            "telosworks": [
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
+         await telosbuild.loadFixtures("projects", {
+            "telosbuild": [
                 {
                     "project_id": 0,
                     "title": "Title",
                     "ballot_name": "",
                     "status": 1,
-                    "build_director": "user1",
+                    "bond": "10.0000 TLOS",
+                    "program_manager": "user1",
+                    "project_manager": "",
                     "description": "description",
                     "github_url": "url",
+                    "pdf":"pdf",
                     "usd_rewarded": "10.0000 USD",
                     "tlos_locked": "0.0000 TLOS",
                     "number_proposals_rewarded": 2,
@@ -59,18 +61,18 @@ describe("Delete Project Telos Works Smart Contract Tests", () => {
     it("Remove project", async () => {
         expect.assertions(1);
 
-        await telosworks.contract.rmvproject({ project_id: 0 },
+        await telosbuild.contract.rmvproject({ project_id: 0 },
             [{
                 actor: user1.accountName,
                 permission: "active"
             }]);
 
-        expect(telosworks.getTableRowsScoped("projects")["telosworks"]).toBeUndefined();
+        expect(telosbuild.getTableRowsScoped("projects")["telosbuild"]).toBeUndefined();
     });
 
 
     it("Fails to remove project if it doesn't exist", async () => {
-        await expect(telosworks.contract.rmvproject({ project_id: 15 },
+        await expect(telosbuild.contract.rmvproject({ project_id: 15 },
             [{
                 actor: user1.accountName,
                 permission: "active"
@@ -79,16 +81,19 @@ describe("Delete Project Telos Works Smart Contract Tests", () => {
 
      it("Fails to remove project if it is in status other than drafting", async () => {
         
-       await telosworks.loadFixtures("projects", {
-            "telosworks": [
+       await telosbuild.loadFixtures("projects", {
+            "telosbuild": [
                 {
                     "project_id": 15,
                     "title": "Title",
                     "ballot_name": "",
                     "status": 2,
-                    "build_director": "user1",
+                    "bond": "10.0000 TLOS",
+                    "program_manager": "user1",
+                    "project_manager": "",
                     "description": "description",
                     "github_url": "url",
+                    "pdf":"pdf",
                     "usd_rewarded": "10.0000 USD",
                     "tlos_locked": "0.0000 TLOS",
                     "number_proposals_rewarded": 2,
@@ -105,16 +110,16 @@ describe("Delete Project Telos Works Smart Contract Tests", () => {
             ]
         });
          
-        await expect(telosworks.contract.rmvproject({ project_id: 15 },
+        await expect(telosbuild.contract.rmvproject({ project_id: 15 },
             [{
                 actor: user1.accountName,
                 permission: "active"
             }])).rejects.toThrow("project must be drafting to delete");
     });
     
-    it("Fails to remove project if user other than build director tries to delete it", async () => {
+    it("Fails to remove project if user other than program manager tries to delete it", async () => {
 
-        await expect(telosworks.contract.rmvproject({ project_id: 0 },
+        await expect(telosbuild.contract.rmvproject({ project_id: 0 },
             [{
                 actor: admin.accountName,
                 permission: "active"

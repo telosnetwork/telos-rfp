@@ -4,17 +4,17 @@ const config = loadConfig("hydra.yml");
 
 describe("Add user Blacklist Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -24,10 +24,10 @@ describe("Add user Blacklist Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
 
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
-        await telosworks.loadFixtures("profiles", require("../fixtures/telosworks/profiles.json"));
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
+        await telosbuild.loadFixtures("profiles", require("../fixtures/telosbuild/profiles.json"));
 
     });
 
@@ -35,18 +35,18 @@ describe("Add user Blacklist Telos Works Smart Contract Tests", () => {
         expect.assertions(1);
 
 
-        await telosworks.contract.adduserbl({ account: "user1" },
+        await telosbuild.contract.adduserbl({ account: "user1" },
           [{
             actor: admin.accountName,
             permission: "active"
           }]);
 
-        const blacklist = telosworks.getTableRowsScoped("usersbl")[telosworks.accountName];
+        const blacklist = telosbuild.getTableRowsScoped("usersbl")[telosbuild.accountName];
         expect(blacklist).toEqual([{account: "user1"}]);
     })
 
     it("fails to add user blacklist if user is not in the system", async () => {
-        await expect(telosworks.contract.adduserbl({ account: "user3" },
+        await expect(telosbuild.contract.adduserbl({ account: "user3" },
             [{
                 actor: admin.accountName,
                 permission: "active"
@@ -55,13 +55,13 @@ describe("Add user Blacklist Telos Works Smart Contract Tests", () => {
 
     it("fails to add user blacklist if user is already in the blacklist", async () => {
         
-        await telosworks.contract.adduserbl({ account: "user1" },
+        await telosbuild.contract.adduserbl({ account: "user1" },
             [{
                 actor: admin.accountName,
                 permission: "active"
             }]);
          
-        await expect(telosworks.contract.adduserbl({ account: "user1" },
+        await expect(telosbuild.contract.adduserbl({ account: "user1" },
             [{
                 actor: admin.accountName,
                 permission: "active"
@@ -70,7 +70,7 @@ describe("Add user Blacklist Telos Works Smart Contract Tests", () => {
 
 
     it("fails to add user blacklist if user different than admin tries", async () => {
-        await expect(telosworks.contract.adduserbl({ account: "user1" },
+        await expect(telosbuild.contract.adduserbl({ account: "user1" },
             [{
               actor: user1.accountName,
               permission: "active"

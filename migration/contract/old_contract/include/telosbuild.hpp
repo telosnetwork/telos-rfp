@@ -1,7 +1,7 @@
 // TLOS Works is a Worker Proposal System for the TLOS Blockchain Network.
 //
 // @author Roger Taule
-// @contract telosworks
+// @contract telosbuild
 // @version v0.1.0
 
 #include <eosio/eosio.hpp>
@@ -19,7 +19,7 @@ using namespace telosdecide;
 //approved treasuries: VOTE
 //categories added by default: marketing, infra.tools, dev.tools, governance, other
 
-CONTRACT telosworks : public contract {
+CONTRACT telosbuild : public contract {
     public:
         using contract::contract;
 
@@ -40,10 +40,28 @@ CONTRACT telosworks : public contract {
             selected          = 5,
             started           = 6,
             completed         = 7,
+            cancelled         = 8,
         };
 
         friend constexpr bool operator == ( const uint8_t& a, const project_status& b) {
             return a == static_cast<uint8_t>(b);
+        }
+
+        enum class proposal_status : uint8_t {
+            drafting          = 1,
+            //submitted         = 2,
+            accepted          = 3,
+            spam              = 4,
+            rewarded          = 5,
+            selected          = 6
+        };
+
+        friend constexpr bool operator == ( const uint8_t& a, const proposal_status& b) {
+            return a == static_cast<uint8_t>(b);
+        }
+
+        friend constexpr bool operator != ( const uint8_t& a, const proposal_status& b) {
+            return a != static_cast<uint8_t>(b);
         }
 
         enum class milestone_status : uint8_t {
@@ -56,6 +74,8 @@ CONTRACT telosworks : public contract {
             return a == static_cast<uint8_t>(b);
         }
 
+        //ACTION copytables();
+
         //======================== config actions ========================
 
         //initialize the contract
@@ -64,28 +84,38 @@ CONTRACT telosworks : public contract {
         ACTION init(name initial_admin);
 
         //set contract version
-        //auth: admin_acct
+        //auth: administrator
         ACTION setversion(string new_version);
 
         //set new admin
         //pre: new_admin account exists 
-        //auth: admin_acct
+        //auth: administrator
         ACTION setadmin(name new_admin);
 
+        //set new locked time 
+        //auth: administrator
         ACTION setlckdtime(uint32_t days);
 
+        //set new milestone length
+        //auth: administrator
         ACTION setmilestone(uint32_t days);
 
-        ACTION setbonusperc(double bonus_percentage);
-    
         //===================== Administrator Actions =====================
 
-        ACTION addbuilddir(name director);
+        //Add a new program manager
+        //auth: administrator
+        ACTION addmanager(name manager);
 
-        ACTION rmvbuilddir(name director);
+        //Remove a program manager
+        //auth: administrator
+        ACTION rmvmanager(name manager);
 
+        //Add user to the blacklist
+        //auth: administrator
         ACTION adduserbl(name account);
 
+        //Remove user from the blacklist
+        //auth: administrator
         ACTION rmvuserbl(name account);
         
         
@@ -96,65 +126,123 @@ CONTRACT telosworks : public contract {
         // ACTION addprofile(name account, string full_name, string country, string email, string company);
 
         // //remove a profile
-        // //auth: account or admin_acct
+        // //auth: account or administrator
         // ACTION rmvprofile(name account);
 
+        //claims rewards for either a proposal rewarded or a milestone
+        //pre: now > locked_until_ts 
+        //auth: account
         ACTION claimreward(name account, uint64_t locked_id);
+
+
+        //withdraw from account balance
+        //pre: profiles.tlos_balance >= quantity
+        //auth: account
+        ACTION withdraw(name account, asset quantity);
+
 
         //======================= project actions =========================
 
-
-        ACTION draftproject(string title, name build_director, string description, string github_url, asset usd_rewarded, 
+        //creates a new project
+        //post: project.status == drafting
+        //auth: program_manager
+        ACTION draftproject(string title, name program_manager, asset bond, string description, string github_url, asset usd_rewarded, 
         uint8_t number_proposals_rewarded, uint32_t proposing_days, uint32_t voting_days);
 
-        ACTION editproject(uint64_t project_id, optional<string> title, optional<string> description, 
+        //edits a project
+        //pre: project.status == drafting
+        //auth: program_manager
+        ACTION editproject(uint64_t project_id, optional<asset> bond, optional<string> title, optional<string> description, 
         optional<string> github_url, optional<asset> usd_rewarded, optional<uint8_t> number_proposals_rewarded,
         optional<uint32_t> proposing_days, optional<uint32_t> voting_days);
 
+        //Removes a project
+        //pre: project.status == drafting
+        //auth: program_manager
         ACTION rmvproject(uint64_t project_id);
 
+        //Publishes a project so users can send proposals
+        //pre: project.status == drafting
+        //post: project.status == published
+        //auth: program_manager
         ACTION publishprjct(uint64_t project_id);
 
+        //Starts a project after voting process has finished and proposals rewarded and selected are chosen
+        //pre: project.status == selected
+        //post: project.status == started
+        //auth: program_manager
         ACTION startproject(uint64_t project_id);
 
+        //Ends a project after all milestones has been completed and reviewed
+        //pre: project.status == started
+        //post: project.status == completed
+        //auth: program_manager
         ACTION endproject(uint64_t project_id);
         
         //======================= proposal actions =========================
 
-        ACTION newproposal(uint64_t project_id, name proposer, uint64_t number_milestones, string timeline, string pdf, asset usd_amount, 
-        string mockups_link, string kanban_board_link);
+        //Creates a new proposal for a project
+        //pre: project.status == published
+        //auth: proposer
+        ACTION newproposal(uint64_t project_id, name proposer, string title, uint64_t number_milestones, string timeline,
+        string pdf, asset usd_amount, string mockups_link, string kanban_board_link);
 
-        ACTION editproposal(uint64_t project_id, uint64_t proposal_id, optional<string> timeline, optional<uint64_t> number_milestones,
+        //Edits a proposal for a project
+        //pre: project.status == published
+        //auth: proposal.proposer
+        ACTION editproposal(uint64_t proposal_id, optional<string> title, optional<string> timeline, optional<uint64_t> number_milestones,
         optional<string> pdf, optional<asset> usd_amount, optional<string> mockups_link, optional<string> kanban_board_link);
 
-        ACTION rmvproposal(uint64_t project_id, uint64_t proposal_id);
+        // //Submits a proposal for a project
+        // //pre: project.status == published
+        // //auth: proposal.proposer
+        // ACTION sendproposal(uint64_t proposal_id);
+
+        //Removes a proposal for a project
+        //pre: project.status == published
+        //auth: proposal.proposer
+        ACTION rmvproposal(uint64_t proposal_id);
+
+        ACTION returnbond(uint64_t proposal_id, bool return_bond);
 
         //======================== voting actions =========================
 
         //pass a winner proposal and proposals rewarded, without going through voting
         //pre: project.status == published
-        //post: project.status == inprogress
-        //auth: build_director
+        //post: project.status == voting
+        //auth: program_manager
         ACTION skipvoting(uint64_t project_id, uint64_t proposal_selected, vector<uint64_t> proposals_rewarded);
 
         //begin voting period on a proposal
         //pre: project.status == published and propose_end_time > now
-        //auth: build_director
-        ACTION beginvoting(uint64_t project_id, name ballot_name);
+        //auth: program_manager
+        ACTION beginvoting(uint64_t project_id, name ballot_name, optional<bool> cancel);
 
         //end voting period on a proposal and receive ballot results
-        //pre: proposal.status == voting, now > decide::ballot.end_time
-        //post: proposal.status == inprogress
-        //auth: build_director
+        //pre: project.status == voting, now > decide::ballot.end_time
+        //post: project.status == voted
+        //auth: program_manager
         ACTION endvoting(uint64_t project_id);
 
+        //after the proposals rewarded has been selected through the voting process, select the proposal to be executed
+        //pre: project.status == voted
+        //post: project.status == selected
+        //auth: program_manager
         ACTION pickproposal(uint64_t project_id, uint64_t proposal_id);
 
         //======================= milestones actions =======================
 
+        //send a report for a milestone
+        //pre: project.status == started and milestone.status == pending
+        //post: milestone.status == sent
+        //auth: proposal.proposer
         ACTION sendreport(uint64_t project_id, uint64_t milestone_id, string title, string description, string documents);
 
-        ACTION reviewreport(uint64_t project_id, uint64_t milestone_id, bool pay_reward, bool bonus);
+        //Review a milestone and give rewards
+        //pre: project.status == started and milestone.status == sent
+        //post: milestone.status == reviewed
+        //auth: program manager
+        ACTION reviewreport(uint64_t project_id, uint64_t milestone_id, bool pay_reward);
 
         //====================== notification handlers ======================
 
@@ -175,6 +263,14 @@ CONTRACT telosworks : public contract {
 
         //ACTION wipeconf();
 
+        //ACTION wipeprojects();
+
+        //======================= test actions ====================
+
+        ACTION skpstartvote(uint64_t project_id);
+
+        ACTION skpmilestone(uint64_t project_id, uint64_t milestone_id);
+
         //======================== contract tables ========================
         
 
@@ -185,16 +281,15 @@ CONTRACT telosworks : public contract {
             name administrator; //account that can approve proposals for voting
             asset available_funds = asset(0, TLOS_SYM); //total available funding for projects
             asset reserved_funds = asset(0, TLOS_SYM); //total funding reserved by approved proposals
-            vector<name> build_directors = vector<name>{};
-            //vector<name> deprecated_build_directors = vector<name>{};
+            vector<name> program_managers = vector<name>{};
+            //vector<name> deprecated_program_managers = vector<name>{};
             double reward_percentage = 0.05; //Invariable
-            double bonus_percentage = 0.05;//Variable
             uint8_t milestones_days = 14;
             uint32_t tlos_locked_time = 365;
 
             EOSLIB_SERIALIZE(config, (contract_version)(administrator)
-            (available_funds)(reserved_funds)(build_directors)
-            (reward_percentage)(bonus_percentage)(milestones_days)(tlos_locked_time))
+            (available_funds)(reserved_funds)(program_managers)
+            (reward_percentage)(milestones_days)(tlos_locked_time))
         };
         typedef singleton<name("config"), config> config_singleton;
 
@@ -207,9 +302,12 @@ CONTRACT telosworks : public contract {
             // string email;
             // string company;
             asset tlos_balance = asset(0, TLOS_SYM);
+            asset locked_tlos_balance = asset(0, TLOS_SYM);
+            asset locked_tlos_bonds = asset(0,TLOS_SYM);
 
             uint64_t primary_key() const { return account.value; }
-            EOSLIB_SERIALIZE(profile, (account)/*(full_name)(country)(email)(company)*/(tlos_balance))
+            EOSLIB_SERIALIZE(profile, (account)/*(full_name)(country)(email)(company)*/
+                (tlos_balance)(locked_tlos_balance)(locked_tlos_bonds))
         };
         typedef multi_index<name("profiles"), profile> profiles_table;
 
@@ -220,14 +318,16 @@ CONTRACT telosworks : public contract {
             string title;
             name ballot_name;
             uint8_t status = static_cast<uint8_t>(project_status::drafting);
-            name build_director;
+            name program_manager;
+            name project_manager;
+            asset bond;
             string description;
             string github_url;
             asset usd_rewarded;
             asset tlos_locked = asset(0, TLOS_SYM); 
             uint8_t number_proposals_rewarded; 
             vector<uint64_t> proposals_rewarded = vector<uint64_t> {};  
-            vector<uint64_t> proposal_selected = vector<uint64_t> {}; //0
+            vector<uint64_t> proposal_selected = vector<uint64_t> {}; 
             uint32_t proposing_days;
             uint32_t voting_days;
             time_point_sec update_ts; // timestamp of latest proposal update
@@ -238,41 +338,65 @@ CONTRACT telosworks : public contract {
 
             uint64_t primary_key() const { return project_id; }
 
-            uint64_t by_build_director() const { return build_director.value; }
+            uint64_t by_program_manager() const { return program_manager.value; }
 
             uint64_t by_ballot() const { return ballot_name.value; }
 
+            uint64_t by_status() const { return status; }
 
-            EOSLIB_SERIALIZE(project, (project_id)(title)(ballot_name)(status)(build_director)(description)(github_url)
-            (usd_rewarded)(tlos_locked)(number_proposals_rewarded)(proposals_rewarded)(proposal_selected)(proposing_days)
-            (voting_days)(update_ts)(propose_end_ts)(vote_end_ts)(start_ts)(end_ts))
+            uint64_t by_project_manager() const { return project_manager.value; }
+
+            EOSLIB_SERIALIZE(project, (project_id)(title)(ballot_name)(status)(program_manager)(project_manager)(bond)(description)
+            (github_url)(usd_rewarded)(tlos_locked)(number_proposals_rewarded)(proposals_rewarded)(proposal_selected)
+            (proposing_days)(voting_days)(update_ts)(propose_end_ts)(vote_end_ts)(start_ts)(end_ts))
         };
         typedef multi_index<name("projects"), project,
-            indexed_by<name("bydirector"), const_mem_fun<project, uint64_t, &project::by_build_director>>,
-            indexed_by<name("byballot"), const_mem_fun<project, uint64_t, &project::by_ballot>>
+            indexed_by<name("byprogrammgr"), const_mem_fun<project, uint64_t, &project::by_program_manager>>,
+            indexed_by<name("byballot"), const_mem_fun<project, uint64_t, &project::by_ballot>>,
+            indexed_by<name("bystatus"), const_mem_fun<project, uint64_t, &project::by_status>>,
+            indexed_by<name("byprojectmgr"), const_mem_fun<project, uint64_t, &project::by_project_manager>>
             > projects_table;
 
 
         //proposals table
-        //scope: project_id
+        //scope: self
         TABLE proposal {
-            uint64_t proposal_id; //unique id of project;
+            uint64_t proposal_id; //unique id of proposal
+            uint64_t project_id; 
             name proposer;
+            uint8_t status = static_cast<uint8_t>(proposal_status::drafting);
             uint64_t number_milestones;
+            string title;
             string timeline; //timeline csv;
             string pdf;
             asset usd_amount;
-            asset locked_tlos_amount = asset(0, TLOS_SYM);
             string mockups_link;
             string kanban_board_link;
             time_point_sec update_ts; // timestamp of latest proposal update
 
             uint64_t primary_key() const { return proposal_id; }
 
-            EOSLIB_SERIALIZE(proposal, (proposal_id)(proposer)(number_milestones)(timeline)(pdf)(usd_amount)
-            (locked_tlos_amount)(mockups_link)(kanban_board_link)(update_ts))
+            uint64_t by_project() const { return project_id; }
+
+            uint64_t by_proposer() const { return proposer.value; }
+
+            uint64_t by_status() const { return status; }
+
+            // Upper 16 bits: proposer, status; lower 32 bits: proposal_id
+            uint64_t by_proposer_and_status() const { return (((uint64_t)proposer.value << 56)|((uint64_t)status << 48)|proposal_id); }
+
+            uint128_t by_project_and_status() const { return ((uint128_t)project_id << 64)|((uint128_t)status); }
+
+            EOSLIB_SERIALIZE(proposal, (proposal_id)(project_id)(proposer)(status)(number_milestones)(title)
+            (timeline)(pdf)(usd_amount)(mockups_link)(kanban_board_link)(update_ts))
         };
-        typedef multi_index<name("proposals"), proposal> proposals_table;
+        typedef multi_index<name("proposals"), proposal,
+            indexed_by<name("byproject"), const_mem_fun<proposal, uint64_t, &proposal::by_project>>,
+            indexed_by<name("byproposer"), const_mem_fun<proposal, uint64_t, &proposal::by_proposer>>,
+            indexed_by<name("bystatus"), const_mem_fun<proposal, uint64_t, &proposal::by_status>>,
+            indexed_by<name("bypropstat"), const_mem_fun<proposal, uint64_t, &proposal::by_proposer_and_status>>,
+            indexed_by<name("byprojstat"), const_mem_fun<proposal, uint128_t, &proposal::by_project_and_status>>
+        > proposals_table;
 
         //milestones table
         //scope: project_id
@@ -282,18 +406,22 @@ CONTRACT telosworks : public contract {
             asset tlos_rewarded;
             string title;
             string description;
-            string documents;
+            string documents;   
             time_point_sec start_ts;
             time_point_sec end_ts;
             time_point_sec send_ts;
             time_point_sec review_ts;
+
+            uint64_t by_status() const { return status; }
 
             uint64_t primary_key() const { return milestone_id; }
 
             EOSLIB_SERIALIZE(milestone, (milestone_id)(status)(tlos_rewarded)(title)
             (description)(documents)(start_ts)(end_ts)(send_ts)(review_ts))
         };
-        typedef multi_index<name("milestones"), milestone> milestones_table;
+        typedef multi_index<name("milestones"), milestone,
+            indexed_by<name("bystatus"), const_mem_fun<milestone, uint64_t, &milestone::by_status>>
+            > milestones_table;
         
         //locked telos amounts table
         //scope: account_name
@@ -301,11 +429,11 @@ CONTRACT telosworks : public contract {
             uint64_t locked_id;
             asset tlos_amount;
             time_point_sec locked_until_ts;
+            string memo;
 
-            
             auto primary_key()const { return locked_id; }
 
-            EOSLIB_SERIALIZE(locked_tlos, (locked_id)(tlos_amount)(locked_until_ts));
+            EOSLIB_SERIALIZE(locked_tlos, (locked_id)(tlos_amount)(locked_until_ts)(memo));
         };
         typedef multi_index<name("lockedtlos"), locked_tlos> locked_tlos_table;
 

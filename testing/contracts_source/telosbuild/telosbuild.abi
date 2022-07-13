@@ -4,11 +4,11 @@
     "types": [],
     "structs": [
         {
-            "name": "addbuilddir",
+            "name": "addmanager",
             "base": "",
             "fields": [
                 {
-                    "name": "director",
+                    "name": "manager",
                     "type": "name"
                 }
             ]
@@ -34,6 +34,10 @@
                 {
                     "name": "ballot_name",
                     "type": "name"
+                },
+                {
+                    "name": "cancel",
+                    "type": "bool?"
                 }
             ]
         },
@@ -72,15 +76,11 @@
                     "type": "asset"
                 },
                 {
-                    "name": "build_directors",
+                    "name": "program_managers",
                     "type": "name[]"
                 },
                 {
                     "name": "reward_percentage",
-                    "type": "float64"
-                },
-                {
-                    "name": "bonus_percentage",
                     "type": "float64"
                 },
                 {
@@ -102,8 +102,12 @@
                     "type": "string"
                 },
                 {
-                    "name": "build_director",
+                    "name": "program_manager",
                     "type": "name"
+                },
+                {
+                    "name": "bond",
+                    "type": "asset"
                 },
                 {
                     "name": "description",
@@ -111,6 +115,10 @@
                 },
                 {
                     "name": "github_url",
+                    "type": "string"
+                },
+                {
+                    "name": "pdf",
                     "type": "string"
                 },
                 {
@@ -140,6 +148,10 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "bond",
+                    "type": "asset?"
+                },
+                {
                     "name": "title",
                     "type": "string?"
                 },
@@ -149,6 +161,10 @@
                 },
                 {
                     "name": "github_url",
+                    "type": "string?"
+                },
+                {
+                    "name": "pdf",
                     "type": "string?"
                 },
                 {
@@ -174,12 +190,12 @@
             "base": "",
             "fields": [
                 {
-                    "name": "project_id",
+                    "name": "proposal_id",
                     "type": "uint64"
                 },
                 {
-                    "name": "proposal_id",
-                    "type": "uint64"
+                    "name": "title",
+                    "type": "string?"
                 },
                 {
                     "name": "timeline",
@@ -190,7 +206,19 @@
                     "type": "uint64?"
                 },
                 {
-                    "name": "pdf",
+                    "name": "tech_qualifications_pdf",
+                    "type": "string?"
+                },
+                {
+                    "name": "approach_pdf",
+                    "type": "string?"
+                },
+                {
+                    "name": "cost_and_schedule_pdf",
+                    "type": "string?"
+                },
+                {
+                    "name": "references_pdf",
                     "type": "string?"
                 },
                 {
@@ -280,6 +308,10 @@
                 {
                     "name": "locked_until_ts",
                     "type": "time_point_sec"
+                },
+                {
+                    "name": "memo",
+                    "type": "string"
                 }
             ]
         },
@@ -342,6 +374,10 @@
                     "type": "name"
                 },
                 {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
                     "name": "number_milestones",
                     "type": "uint64"
                 },
@@ -350,7 +386,19 @@
                     "type": "string"
                 },
                 {
-                    "name": "pdf",
+                    "name": "tech_qualifications_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "approach_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "cost_and_schedule_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "references_pdf",
                     "type": "string"
                 },
                 {
@@ -392,6 +440,14 @@
                 {
                     "name": "tlos_balance",
                     "type": "asset"
+                },
+                {
+                    "name": "locked_tlos_balance",
+                    "type": "asset"
+                },
+                {
+                    "name": "locked_tlos_bonds",
+                    "type": "asset"
                 }
             ]
         },
@@ -416,8 +472,16 @@
                     "type": "uint8"
                 },
                 {
-                    "name": "build_director",
+                    "name": "program_manager",
                     "type": "name"
+                },
+                {
+                    "name": "project_manager",
+                    "type": "name"
+                },
+                {
+                    "name": "bond",
+                    "type": "asset"
                 },
                 {
                     "name": "description",
@@ -425,6 +489,10 @@
                 },
                 {
                     "name": "github_url",
+                    "type": "string"
+                },
+                {
+                    "name": "pdf",
                     "type": "string"
                 },
                 {
@@ -486,27 +554,47 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
                     "name": "proposer",
                     "type": "name"
+                },
+                {
+                    "name": "status",
+                    "type": "uint8"
                 },
                 {
                     "name": "number_milestones",
                     "type": "uint64"
                 },
                 {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
                     "name": "timeline",
                     "type": "string"
                 },
                 {
-                    "name": "pdf",
+                    "name": "tech_qualifications_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "approach_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "cost_and_schedule_pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "references_pdf",
                     "type": "string"
                 },
                 {
                     "name": "usd_amount",
-                    "type": "asset"
-                },
-                {
-                    "name": "locked_tlos_amount",
                     "type": "asset"
                 },
                 {
@@ -534,6 +622,20 @@
             ]
         },
         {
+            "name": "returnbond",
+            "base": "",
+            "fields": [
+                {
+                    "name": "proposal_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "return_bond",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
             "name": "reviewreport",
             "base": "",
             "fields": [
@@ -548,19 +650,15 @@
                 {
                     "name": "pay_reward",
                     "type": "bool"
-                },
-                {
-                    "name": "bonus",
-                    "type": "bool"
                 }
             ]
         },
         {
-            "name": "rmvbuilddir",
+            "name": "rmvmanager",
             "base": "",
             "fields": [
                 {
-                    "name": "director",
+                    "name": "manager",
                     "type": "name"
                 }
             ]
@@ -579,10 +677,6 @@
             "name": "rmvproposal",
             "base": "",
             "fields": [
-                {
-                    "name": "project_id",
-                    "type": "uint64"
-                },
                 {
                     "name": "proposal_id",
                     "type": "uint64"
@@ -636,16 +730,6 @@
             ]
         },
         {
-            "name": "setbonusperc",
-            "base": "",
-            "fields": [
-                {
-                    "name": "bonus_percentage",
-                    "type": "float64"
-                }
-            ]
-        },
-        {
             "name": "setlckdtime",
             "base": "",
             "fields": [
@@ -694,6 +778,30 @@
             ]
         },
         {
+            "name": "skpmilestone",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "milestone_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "skpstartvote",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
             "name": "startproject",
             "base": "",
             "fields": [
@@ -714,15 +822,24 @@
             ]
         },
         {
-            "name": "wipeconf",
+            "name": "withdraw",
             "base": "",
-            "fields": []
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
         }
     ],
     "actions": [
         {
-            "name": "addbuilddir",
-            "type": "addbuilddir",
+            "name": "addmanager",
+            "type": "addmanager",
             "ricardian_contract": ""
         },
         {
@@ -791,13 +908,18 @@
             "ricardian_contract": ""
         },
         {
+            "name": "returnbond",
+            "type": "returnbond",
+            "ricardian_contract": ""
+        },
+        {
             "name": "reviewreport",
             "type": "reviewreport",
             "ricardian_contract": ""
         },
         {
-            "name": "rmvbuilddir",
-            "type": "rmvbuilddir",
+            "name": "rmvmanager",
+            "type": "rmvmanager",
             "ricardian_contract": ""
         },
         {
@@ -826,11 +948,6 @@
             "ricardian_contract": ""
         },
         {
-            "name": "setbonusperc",
-            "type": "setbonusperc",
-            "ricardian_contract": ""
-        },
-        {
             "name": "setlckdtime",
             "type": "setlckdtime",
             "ricardian_contract": ""
@@ -851,13 +968,23 @@
             "ricardian_contract": ""
         },
         {
+            "name": "skpmilestone",
+            "type": "skpmilestone",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "skpstartvote",
+            "type": "skpstartvote",
+            "ricardian_contract": ""
+        },
+        {
             "name": "startproject",
             "type": "startproject",
             "ricardian_contract": ""
         },
         {
-            "name": "wipeconf",
-            "type": "wipeconf",
+            "name": "withdraw",
+            "type": "withdraw",
             "ricardian_contract": ""
         }
     ],

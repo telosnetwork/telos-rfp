@@ -4,7 +4,7 @@ const config = loadConfig("hydra.yml");
 
 describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
     let user2 = blockchain.createAccount("user2");
@@ -12,12 +12,12 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     let eosiotoken = blockchain.createAccount("eosio.token");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -29,39 +29,41 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
         eosiotoken.resetTables();
 
-        await telosworks.loadFixtures("config", {
-            "telosworks": [
+        await telosbuild.loadFixtures("config", {
+            "telosbuild": [
                 {
                     "contract_version": "0.1.0",
                     "administrator": "admin",
                     "available_funds": "50.0000 TLOS",
                     "reserved_funds": "500.0000 TLOS",
                     "tlos_locked_time": 365,
-                    "build_directors": ["user1"],
+                    "program_managers": ["user1"],
                     "reward_percentage": 0.05,
-                    "bonus_percentage": 0.05,
                     "milestones_days":14
                 }
             ]
         });
-        await telosworks.loadFixtures("profiles", {
-            "telosworks": [
+        await telosbuild.loadFixtures("profiles", {
+            "telosbuild": [
                 {
                     "account": "user2",
-                    "tlos_balance": "15.0000 TLOS"
+                    "locked_tlos_balance": "15.0000 TLOS",
+                    "tlos_balance": "0.0000 TLOS",
+                    "locked_tlos_bonds": "0.0000 TLOS",
                 }
             ]
         });
 
-        await telosworks.loadFixtures("lockedtlos", {
+        await telosbuild.loadFixtures("lockedtlos", {
             "user2": [
                 {
                     locked_id: 0,
                     tlos_amount: "15.0000 TLOS",
-                    locked_until_ts: "1999-01-01T00:00:00.000"
+                    locked_until_ts: "1999-01-01T00:00:00.000",
+                    memo: "Test memo",
                 }
             ]
         })
@@ -72,7 +74,7 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     it("claim rewards succeeds", async () => {
         expect.assertions(5);
 
-        await telosworks.contract.claimreward({
+        await telosbuild.contract.claimreward({
             account: "user2",
             locked_id: 0
         }, [{
@@ -80,24 +82,24 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
             permission: "active"
         }])
 
-        const conf = telosworks.getTableRowsScoped("config")["telosworks"][0];
+        const conf = telosbuild.getTableRowsScoped("config")["telosbuild"][0];
         expect(conf.reserved_funds).toEqual("485.0000 TLOS");
 
-        const profiles = telosworks.getTableRowsScoped("profiles")["telosworks"];
+        const profiles = telosbuild.getTableRowsScoped("profiles")["telosbuild"];
         expect(profiles.find(prof => prof.account === "user2").tlos_balance).toEqual("0.0000 TLOS");
 
-        const lockedtlos = telosworks.getTableRowsScoped("lockedtlos")["user2"];
+        const lockedtlos = telosbuild.getTableRowsScoped("lockedtlos")["user2"];
         expect(lockedtlos).toBeUndefined();
 
         const accounts = eosiotoken.getTableRowsScoped("accounts");
-        expect(accounts.telosworks[0].balance).toEqual("35.0000 TLOS");
+        expect(accounts.telosbuild[0].balance).toEqual("35.0000 TLOS");
         expect(accounts.user2[0].balance).toEqual("65.0000 TLOS");
 
         
     });
 
     it("fails if account not found", async () => {
-        await expect(telosworks.contract.claimreward({
+        await expect(telosbuild.contract.claimreward({
             account: "user3",
             locked_id: 0
         }, [{
@@ -107,7 +109,7 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     });
 
     it("fails if locked tlos id not found", async () => {
-        await expect(telosworks.contract.claimreward({
+        await expect(telosbuild.contract.claimreward({
             account: "user2",
             locked_id: 1
         }, [{
@@ -117,17 +119,18 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     });
 
     it("fails if TLOS is still locked", async () => {
-        await telosworks.loadFixtures("lockedtlos", {
+        await telosbuild.loadFixtures("lockedtlos", {
             "user2": [
                 {
                     locked_id: 1,
                     tlos_amount: "15.0000 TLOS",
-                    locked_until_ts: "2001-01-01T00:00:00.000"
+                    locked_until_ts: "2001-01-01T00:00:00.000",
+                    memo: "Test memo",
                 }
             ]
         })
 
-        await expect(telosworks.contract.claimreward({
+        await expect(telosbuild.contract.claimreward({
             account: "user2",
             locked_id: 1
         }, [{
@@ -137,7 +140,7 @@ describe("Claim Rewards for project rewarded Telos Works Smart Contract Tests", 
     });
 
     it("fails if user other than owner tries to claim funds", async () => {
-        await expect(telosworks.contract.claimreward({
+        await expect(telosbuild.contract.claimreward({
             account: "user2",
             locked_id: 1
         }, [{

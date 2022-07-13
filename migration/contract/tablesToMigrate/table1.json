@@ -1,0 +1,9 @@
+{
+    "tableStruct": "project",
+    "supportTableStruct": "supportproj",
+    "tableName": "projects",
+    "supportTableName": "supportproj",
+    "tableType": "projects_table",
+    "supportTableType": "support_projects_table"
+}
+

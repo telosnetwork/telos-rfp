@@ -1,7 +1,7 @@
 {
-  "name": "telosworks",
+  "name": "telosbuild",
   "version": "1.0.0",
-  "description": "Testing telosworks smart contract with Hydra",
+  "description": "Testing telosbuild smart contract with Hydra",
   "main": "",
   "scripts": {
     "test": "jest"

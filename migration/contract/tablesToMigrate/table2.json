@@ -1,0 +1,9 @@
+{
+    "tableStruct": "proposal",
+    "supportTableStruct": "supportprop",
+    "tableName": "proposals",
+    "supportTableName": "supportprop",
+    "tableType": "proposals_table",
+    "supportTableType": "support_proposals_table"
+}
+

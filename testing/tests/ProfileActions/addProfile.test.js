@@ -4,17 +4,17 @@ const config = loadConfig("hydra.yml");
 
 describe.skip("Add profile Telos Works Smart Contract Tests", () => {
     let blockchain = new Blockchain(config);
-    let telosworks = blockchain.createAccount("telosworks");
+    let telosbuild = blockchain.createAccount("telosbuild");
     let admin = blockchain.createAccount("admin");
     let user1 = blockchain.createAccount("user1");
 
     beforeAll(async () => {
-        telosworks.setContract(blockchain.contractTemplates[`telosworks`]);
-        telosworks.updateAuth(`active`, `owner`, {
+        telosbuild.setContract(blockchain.contractTemplates[`telosbuild`]);
+        telosbuild.updateAuth(`active`, `owner`, {
         accounts: [
             {
             permission: {
-                actor: telosworks.accountName,
+                actor: telosbuild.accountName,
                 permission: `eosio.code`
             },
             weight: 1
@@ -24,22 +24,22 @@ describe.skip("Add profile Telos Works Smart Contract Tests", () => {
     });
 
     beforeEach(async () => {
-        telosworks.resetTables();
+        telosbuild.resetTables();
 
-        await telosworks.loadFixtures("config", require("../fixtures/telosworks/config.json"));
+        await telosbuild.loadFixtures("config", require("../fixtures/telosbuild/config.json"));
 
     });
 
     it("add profile", async () => {
         expect.assertions(1);
 
-        await telosworks.contract.addprofile({ account: "user1", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
+        await telosbuild.contract.addprofile({ account: "user1", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
           [{
             actor: user1.accountName,
             permission: "active"
           }]);
 
-        const profile = telosworks.getTableRowsScoped("profiles")[telosworks.accountName];
+        const profile = telosbuild.getTableRowsScoped("profiles")[telosbuild.accountName];
         expect(profile.find(prof => prof.account === "user1")).toEqual({
             account: "user1",
             full_name: "User 1",
@@ -53,15 +53,15 @@ describe.skip("Add profile Telos Works Smart Contract Tests", () => {
     it("modify profile", async () => {
         expect.assertions(1);
 
-        await telosworks.loadFixtures("profiles", require("../fixtures/telosworks/profiles.json"));
+        await telosbuild.loadFixtures("profiles", require("../fixtures/telosbuild/profiles.json"));
 
-        await telosworks.contract.addprofile({ account: "user1", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
+        await telosbuild.contract.addprofile({ account: "user1", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
           [{
             actor: user1.accountName,
             permission: "active"
           }]);
 
-        const profile = telosworks.getTableRowsScoped("profiles")[telosworks.accountName];
+        const profile = telosbuild.getTableRowsScoped("profiles")[telosbuild.accountName];
         expect(profile.find(prof => prof.account === "user1")).toEqual({
             account: "user1",
             full_name: "User 1",
@@ -73,7 +73,7 @@ describe.skip("Add profile Telos Works Smart Contract Tests", () => {
     })
 
     it("fails to add profile if authentication isn't valid", async () => {
-        await expect(telosworks.contract.addprofile({ account: "user2", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
+        await expect(telosbuild.contract.addprofile({ account: "user2", full_name: "User 1", country: "USA", email: "user@example.com", company: "FakeCompany" },
             [{
                 actor: admin.accountName,
                 permission: "active"
