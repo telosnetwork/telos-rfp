@@ -1,0 +1,919 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "addbuilddir",
+            "base": "",
+            "fields": [
+                {
+                    "name": "director",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "adduserbl",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "beginvoting",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "ballot_name",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "claimreward",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "locked_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "config",
+            "base": "",
+            "fields": [
+                {
+                    "name": "contract_version",
+                    "type": "string"
+                },
+                {
+                    "name": "administrator",
+                    "type": "name"
+                },
+                {
+                    "name": "available_funds",
+                    "type": "asset"
+                },
+                {
+                    "name": "reserved_funds",
+                    "type": "asset"
+                },
+                {
+                    "name": "build_directors",
+                    "type": "name[]"
+                },
+                {
+                    "name": "reward_percentage",
+                    "type": "float64"
+                },
+                {
+                    "name": "bonus_percentage",
+                    "type": "float64"
+                },
+                {
+                    "name": "milestones_days",
+                    "type": "uint8"
+                },
+                {
+                    "name": "tlos_locked_time",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "draftproject",
+            "base": "",
+            "fields": [
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "build_director",
+                    "type": "name"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                },
+                {
+                    "name": "github_url",
+                    "type": "string"
+                },
+                {
+                    "name": "usd_rewarded",
+                    "type": "asset"
+                },
+                {
+                    "name": "number_proposals_rewarded",
+                    "type": "uint8"
+                },
+                {
+                    "name": "proposing_days",
+                    "type": "uint32"
+                },
+                {
+                    "name": "voting_days",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "editproject",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "title",
+                    "type": "string?"
+                },
+                {
+                    "name": "description",
+                    "type": "string?"
+                },
+                {
+                    "name": "github_url",
+                    "type": "string?"
+                },
+                {
+                    "name": "usd_rewarded",
+                    "type": "asset?"
+                },
+                {
+                    "name": "number_proposals_rewarded",
+                    "type": "uint8?"
+                },
+                {
+                    "name": "proposing_days",
+                    "type": "uint32?"
+                },
+                {
+                    "name": "voting_days",
+                    "type": "uint32?"
+                }
+            ]
+        },
+        {
+            "name": "editproposal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposal_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "timeline",
+                    "type": "string?"
+                },
+                {
+                    "name": "number_milestones",
+                    "type": "uint64?"
+                },
+                {
+                    "name": "pdf",
+                    "type": "string?"
+                },
+                {
+                    "name": "usd_amount",
+                    "type": "asset?"
+                },
+                {
+                    "name": "mockups_link",
+                    "type": "string?"
+                },
+                {
+                    "name": "kanban_board_link",
+                    "type": "string?"
+                }
+            ]
+        },
+        {
+            "name": "endproject",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "endvoting",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "hydraload",
+            "base": "",
+            "fields": [
+                {
+                    "name": "payload",
+                    "type": "hydraload_payload[]"
+                }
+            ]
+        },
+        {
+            "name": "hydraload_payload",
+            "base": "",
+            "fields": [
+                {
+                    "name": "table_name",
+                    "type": "name"
+                },
+                {
+                    "name": "scope",
+                    "type": "name"
+                },
+                {
+                    "name": "row_data",
+                    "type": "bytes"
+                }
+            ]
+        },
+        {
+            "name": "init",
+            "base": "",
+            "fields": [
+                {
+                    "name": "initial_admin",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "locked_tlos",
+            "base": "",
+            "fields": [
+                {
+                    "name": "locked_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "tlos_amount",
+                    "type": "asset"
+                },
+                {
+                    "name": "locked_until_ts",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "milestone",
+            "base": "",
+            "fields": [
+                {
+                    "name": "milestone_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "status",
+                    "type": "uint8"
+                },
+                {
+                    "name": "tlos_rewarded",
+                    "type": "asset"
+                },
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                },
+                {
+                    "name": "documents",
+                    "type": "string"
+                },
+                {
+                    "name": "start_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "end_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "send_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "review_ts",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "newproposal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposer",
+                    "type": "name"
+                },
+                {
+                    "name": "number_milestones",
+                    "type": "uint64"
+                },
+                {
+                    "name": "timeline",
+                    "type": "string"
+                },
+                {
+                    "name": "pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "usd_amount",
+                    "type": "asset"
+                },
+                {
+                    "name": "mockups_link",
+                    "type": "string"
+                },
+                {
+                    "name": "kanban_board_link",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "pickproposal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposal_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "profile",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                },
+                {
+                    "name": "tlos_balance",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "project",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "ballot_name",
+                    "type": "name"
+                },
+                {
+                    "name": "status",
+                    "type": "uint8"
+                },
+                {
+                    "name": "build_director",
+                    "type": "name"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                },
+                {
+                    "name": "github_url",
+                    "type": "string"
+                },
+                {
+                    "name": "usd_rewarded",
+                    "type": "asset"
+                },
+                {
+                    "name": "tlos_locked",
+                    "type": "asset"
+                },
+                {
+                    "name": "number_proposals_rewarded",
+                    "type": "uint8"
+                },
+                {
+                    "name": "proposals_rewarded",
+                    "type": "uint64[]"
+                },
+                {
+                    "name": "proposal_selected",
+                    "type": "uint64[]"
+                },
+                {
+                    "name": "proposing_days",
+                    "type": "uint32"
+                },
+                {
+                    "name": "voting_days",
+                    "type": "uint32"
+                },
+                {
+                    "name": "update_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "propose_end_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "vote_end_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "start_ts",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "end_ts",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "proposal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "proposal_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposer",
+                    "type": "name"
+                },
+                {
+                    "name": "number_milestones",
+                    "type": "uint64"
+                },
+                {
+                    "name": "timeline",
+                    "type": "string"
+                },
+                {
+                    "name": "pdf",
+                    "type": "string"
+                },
+                {
+                    "name": "usd_amount",
+                    "type": "asset"
+                },
+                {
+                    "name": "locked_tlos_amount",
+                    "type": "asset"
+                },
+                {
+                    "name": "mockups_link",
+                    "type": "string"
+                },
+                {
+                    "name": "kanban_board_link",
+                    "type": "string"
+                },
+                {
+                    "name": "update_ts",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "publishprjct",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "reviewreport",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "milestone_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pay_reward",
+                    "type": "bool"
+                },
+                {
+                    "name": "bonus",
+                    "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "rmvbuilddir",
+            "base": "",
+            "fields": [
+                {
+                    "name": "director",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "rmvproject",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "rmvproposal",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposal_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "rmvuserbl",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "sendreport",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "milestone_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "description",
+                    "type": "string"
+                },
+                {
+                    "name": "documents",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "setadmin",
+            "base": "",
+            "fields": [
+                {
+                    "name": "new_admin",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "setbonusperc",
+            "base": "",
+            "fields": [
+                {
+                    "name": "bonus_percentage",
+                    "type": "float64"
+                }
+            ]
+        },
+        {
+            "name": "setlckdtime",
+            "base": "",
+            "fields": [
+                {
+                    "name": "days",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "setmilestone",
+            "base": "",
+            "fields": [
+                {
+                    "name": "days",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "setversion",
+            "base": "",
+            "fields": [
+                {
+                    "name": "new_version",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "skipvoting",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposal_selected",
+                    "type": "uint64"
+                },
+                {
+                    "name": "proposals_rewarded",
+                    "type": "uint64[]"
+                }
+            ]
+        },
+        {
+            "name": "startproject",
+            "base": "",
+            "fields": [
+                {
+                    "name": "project_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "userbl",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "wipeconf",
+            "base": "",
+            "fields": []
+        }
+    ],
+    "actions": [
+        {
+            "name": "addbuilddir",
+            "type": "addbuilddir",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "adduserbl",
+            "type": "adduserbl",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "beginvoting",
+            "type": "beginvoting",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "claimreward",
+            "type": "claimreward",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "draftproject",
+            "type": "draftproject",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "editproject",
+            "type": "editproject",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "editproposal",
+            "type": "editproposal",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "endproject",
+            "type": "endproject",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "endvoting",
+            "type": "endvoting",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "hydraload",
+            "type": "hydraload",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "init",
+            "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "newproposal",
+            "type": "newproposal",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "pickproposal",
+            "type": "pickproposal",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "publishprjct",
+            "type": "publishprjct",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "reviewreport",
+            "type": "reviewreport",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmvbuilddir",
+            "type": "rmvbuilddir",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmvproject",
+            "type": "rmvproject",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmvproposal",
+            "type": "rmvproposal",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "rmvuserbl",
+            "type": "rmvuserbl",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "sendreport",
+            "type": "sendreport",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setadmin",
+            "type": "setadmin",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setbonusperc",
+            "type": "setbonusperc",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setlckdtime",
+            "type": "setlckdtime",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setmilestone",
+            "type": "setmilestone",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "setversion",
+            "type": "setversion",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "skipvoting",
+            "type": "skipvoting",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "startproject",
+            "type": "startproject",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "wipeconf",
+            "type": "wipeconf",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "config",
+            "type": "config",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "lockedtlos",
+            "type": "locked_tlos",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "milestones",
+            "type": "milestone",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "profiles",
+            "type": "profile",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "projects",
+            "type": "project",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "proposals",
+            "type": "proposal",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "usersbl",
+            "type": "userbl",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}

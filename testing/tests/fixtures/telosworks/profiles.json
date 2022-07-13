@@ -1,0 +1,12 @@
+{
+    "telosworks": [
+        {
+            "account": "user1",
+            "tlos_balance": "100.0000 TLOS"
+        },
+        {
+            "account": "user2",
+            "tlos_balance": "100.0000 TLOS"
+        }
+    ]
+}
